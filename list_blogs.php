@@ -5,22 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Chris Lindeman - Blog</title>
     <link href="tailwind_theme/tailwind.css" rel="stylesheet" type="text/css">
-    <script>
-        function filterBlogs() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const cards = document.getElementsByClassName('blog-card');
-
-            Array.from(cards).forEach(function(card) {
-                const title = card.getElementsByClassName('blog-title')[0].innerText;
-                if (title.toLowerCase().includes(filter)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+    <style>
+        .content {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-    </script>
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        .main-content h2, .main-content h3 {
+            color: #333;
+        }
+        .main-content p, .main-content ul {
+            color: #555;
+        }
+        .main-content ul {
+            padding-left: 20px;
+        }
+        .main-content ul li {
+            margin-bottom: 10px;
+        }
+        .graphic img {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+        .graphic caption {
+            display: block;
+            text-align: center;
+            color: #777;
+            margin-top: 10px;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .search-bar input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body class="text-gray-500">
     <header>
@@ -58,31 +94,29 @@
             <div class="container mx-auto px-4">
                 <h1 class="font-bold text-4xl text-gray-900 md:leading-tight lg:leading-tight lg:text-5xl mb-6">Chris Lindeman's Blog</h1>
                 <p class="mb-6 text-lg text-gray-700">Insights, updates, and stories from my journey as an AI Systems Engineer.</p>
-                <input id="searchInput" type="text" onkeyup="filterBlogs()" placeholder="Search blogs..." class="mb-6 px-4 py-2 rounded border border-gray-300 focus:border-primary-500 focus:outline-none">
-                <div class="flex flex-wrap justify-center">
+                <div class="search-bar">
+                    <input type="text" id="search" placeholder="Search blog posts..." onkeyup="filterPosts()">
+                </div>
+                <div id="posts-container" class="flex flex-wrap justify-center">
                     <?php
-                    $dir = 'blogs';
-                    if (is_dir($dir)) {
-                        if ($dh = opendir($dir)) {
-                            while (($file = readdir($dh)) !== false) {
-                                if ($file != '.' && $file != '..' && pathinfo($file, PATHINFO_EXTENSION) == 'html') {
-                                    $filePath = $dir . '/' . $file;
-                                    $htmlContent = file_get_contents($filePath);
-                                    preg_match('/<title>(.*?)<\/title>/', $htmlContent, $matches);
-                                    $title = $matches[1] ?? 'No title';
-                                    $excerpt = substr(strip_tags($htmlContent), 0, 150) . '...';
-                                    echo '<div class="blog-card w-full md:w-1/2 lg:w-1/3 p-4">';
-                                    echo '<div class="bg-white rounded-lg shadow-lg overflow-hidden">';
-                                    echo '<div class="p-4">';
-                                    echo '<h2 class="blog-title font-bold text-xl text-gray-900 mb-2">' . $title . '</h2>';
-                                    echo '<p class="text-gray-700 mb-4">' . $excerpt . '</p>';
-                                    echo '<a href="' . $filePath . '" class="bg-primary-500 hover:bg-primary-400 text-white px-4 py-2 rounded">Read More</a>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                    echo '</div>';
-                                }
-                            }
-                            closedir($dh);
+                    $blogDirectory = 'blogs/';
+                    $files = scandir($blogDirectory);
+
+                    foreach($files as $file) {
+                        if ($file !== '.' && $file !== '..') {
+                            $filePath = $blogDirectory . $file;
+                            $fileContents = file_get_contents($filePath);
+                            preg_match('/<title>(.*?)<\/title>/', $fileContents, $matches);
+                            $title = $matches[1];
+                            $description = substr(strip_tags($fileContents), 0, 150) . '...';
+                            echo '<div class="w-full md:w-1/2 lg:w-1/3 p-4 post">';
+                            echo '<div class="bg-white rounded-lg shadow-lg overflow-hidden">';
+                            echo '<img src="https://via.placeholder.com/400x200" alt="' . $title . '" class="w-full h-48 object-cover">';
+                            echo '<div class="p-4">';
+                            echo '<h2 class="font-bold text-xl text-gray-900 mb-2">' . $title . '</h2>';
+                            echo '<p class="text-gray-700 mb-4">' . $description . '</p>';
+                            echo '<a href="' . $filePath . '" class="bg-primary-500 hover:bg-primary-400 text-white px-4 py-2 rounded">Read More</a>';
+                            echo '</div></div></div>';
                         }
                     }
                     ?>
@@ -127,4 +161,40 @@
                         </a>
                         <a href="#" class="border border-white hover:bg-white hover:text-gray-900 p-2 rounded-full text-white" aria-label="linkedin">
                             <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
-                                <path d="M19.989 11.572a7.96 7.96 0 0 0-1.573-4.351 9.749 9.749 0 0 1-.92.87 13.157 13.157 0 0 1-3.313 2.01c.167.35.32.689.455 1.009v.003a9.186 9.186 0 0 1 .11.27c1.514-.17 3.11-.108 4.657.101.206.028.4.058.584.088zm-9.385-7.45a46.164 46.164 0 0 1 2.692 4.27c1.223-.482 2.234-1.09 3.048-1.767a7.88 7.88 0 0 0 .796-.755A7.968 7.968 0 0 0 12 4a8.05 8.05 0 0 0-1.396.121zM4.253 9.997a29.21 29.21 0 0 0 2.04-.123 31.53 31.53 0 0 0 4.862-.822 54.365 54.365 0 0 0-2.7-4.227 8.018 8.018 0 0 0-4.202 5.172zm1.53 7.038c.388-.567.898
+                                <path d="M19.989 11.572a7.96 7.96 0 0 0-1.573-4.351 9.749 9.749 0 0 1-.92.87 13.157 13.157 0 0 1-3.313 2.01c.167.35.32.689.455 1.009v.003a9.186 9.186 0 0 1 .11.27c1.514-.17 3.11-.108 4.657.101.206.028.4.058.584.088zm-9.385-7.45a46.164 46.164 0 0 1 2.692 4.27c1.223-.482 2.234-1.09 3.048-1.767a7.88 7.88 0 0 0 .796-.755A7.968 7.968 0 0 0 12 4a8.05 8.05 0 0 0-1.396.121zM4.253 9.997a29.21 29.21 0 0 0 2.04-.123 31.53 31.53 0 0 0 4.862-.822 54.365 54.365 0 0 0-2.7-4.227 8.018 8.018 0 0 0-4.202 5.172zm1.53 7.038c.388-.567.898-1.205 1.575-1.899 1.454-1.49 3.17-2.65 5.156-3.29l.062-.018c-.165-.364-.32-.689-.476-.995-1.836.535-3.77.869-5.697 1.042-.94.085-1.783.122-2.403.128a7.967 7.967 0 0 0 1.784 5.032zm9.222 2.38a35.947 35.947 0 0 0-1.632-5.709c-2.002.727-3.597 1.79-4.83 3.058a9.77 9.77 0 0 0-1.317 1.655A7.964 7.964 0 0 0 12 20a7.977 7.977 0 0 0 3.005-.583zm1.873-1.075a7.998 7.998 0 0 0 2.987-4.87c-.34-.085-.771-.17-1.245-.236a12.023 12.023 0 0 0-3.18-.033 39.368 39.368 0 0 1 1.438 5.14zM12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"></path>
+                            </svg>
+                        </a>
+                        <a href="#" class="border border-white hover:bg-white hover:text-gray-900 p-2 rounded-full text-white" aria-label="youtube">
+                            <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                                <path d="M7.443 5.35c.639 0 1.23.05 1.77.198a3.83 3.83 0 0 1 1.377.544c.394.247.689.594.885 1.039.197.445.295.99.295 1.583 0 .693-.147 1.286-.491 1.731-.295.446-.787.841-1.377 1.138.836.248 1.475.693 1.868 1.286.394.594.64 1.336.64 2.177 0 .693-.148 1.286-.394 1.781-.246.495-.639.94-1.082 1.237a5.078 5.078 0 0 1-1.573.692c-.59.149-1.18.248-1.77.248H1V5.35h6.443zm-.394 5.54c.541 0 .984-.148 1.328-.395.344-.247.492-.693.492-1.237 0-.297-.05-.594-.148-.791-.098-.198-.246-.347-.442-.495-.197-.099-.394-.198-.64-.247-.246-.05-.491-.05-.787-.05H4v3.216h3.05zm.148 5.838c.295 0 .59-.05.836-.099a1.72 1.72 0 0 0 .688-.297 1.76 1.76 0 0 0 .492-.544c.098-.247.197-.544.197-.89 0-.693-.197-1.188-.59-1.534-.394-.297-.935-.445-1.574-.445H4v3.81h3.197zm9.492-.05c.393.396.983.594 1.77.594.541 0 1.033-.148 1.426-.395.394-.297.64-.594.738-.891h2.41c-.394 1.187-.984 2.028-1.77 2.572-.788.495-1.722.792-2.853.792a5.753 5.753 0 0 1-2.115-.396 3.93 3.93 0 0 1-1.574-1.088 3.93 3.93 0 0 1-.983-1.633c-.246-.643-.345-1.335-.345-2.127 0-.742.099-1.434.345-2.078a5.34 5.34 0 0 1 1.032-1.682c.443-.445.984-.84 1.574-1.088a5.49 5.49 0 0 1 2.066-.396c.836 0 1.574.149 2.213.495.64.346 1.131.742 1.525 1.336a6.01 6.01 0 0 1 .885 1.88c.098.692.147 1.385.098 2.176H16c0 .792.295 1.534.689 1.93zm3.098-5.194c-.344-.346-.885-.544-1.525-.544-.442 0-.787.099-1.082.247-.295.149-.491.347-.688.545a1.322 1.322 0 0 0-.344.692c-.05.248-.099.445-.099.643h4.426c-.098-.742-.344-1.236-.688-1.583zM15.459 6.29h5.508v1.336H15.46V6.29z"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="p-4 w-full sm:w-6/12 md:flex-1 lg:w-3/12">
+                    <a href="tel:+0 123-456-789" class="hover:text-gray-400 text-white text-xl">+1 412-636-3647</a>
+                </div>
+                <div class="p-4 w-full sm:w-6/12 md:flex-1 lg:w-3/12">
+                    <a href="info@company.com" class="hover:text-gray-400 text-white text-xl">chris@clindeman.com</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function filterPosts() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const posts = document.querySelectorAll('.post');
+            
+            posts.forEach(post => {
+                const title = post.querySelector('h2').textContent.toLowerCase();
+                if (title.includes(searchInput)) {
+                    post.style.display = '';
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
