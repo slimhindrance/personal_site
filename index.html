@@ -19,7 +19,77 @@
                     .catch(error => console.error('Error:', error));
             });
         }
+            function fetchProjects() {
+    const projects = [
+        {
+            "title": "Linguistic Emotion Detector",
+            "description": "Project 1",
+            "image": "assets/images/emotion_detector.tiff",
+            "link": "github_redirect.html"
+        },
+        {
+            "title": "Sentiment Analyzer",
+            "description": "Project 2",
+            "image": "assets/images/sentiment_analyzer.tiff",
+            "link": "github_redirect.html"
+        },
+        {
+            "title": "Gap Analysis",
+            "description": "Project 3",
+            "image": "assets/images/gap_analyzer.tiff",
+            "link": "github_redirect.html"
+        },
+        {
+            "title": "Web & App Development",
+            "description": "Project 4",
+            "image": "assets/images/311_heatmap.tiff",
+            "link": "http://slimhindrance.pythonanywhere.com"
+        }
+    ];
+let slideIndex = 0;
+function showSlides() {
+    const slides = document.getElementsByClassName('carousel-item');
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove('active');
+    }
+    slideIndex++;
+    if (slideIndex > slides.length) {slideIndex = 1}
+    slides[slideIndex-1].classList.add('active');
+    setTimeout(showSlides, 5000); // Change image every 5 seconds
+}
+
+function changeSlide(n) {
+    slideIndex += n;
+    const slides = document.getElementsByClassName('carousel-item');
+    if (slideIndex > slides.length) {slideIndex = 1}
+    if (slideIndex < 1) {slideIndex = slides.length}
+    for (let i = 0; i < slides.length; i++) {
+        slides[i].classList.remove('active');
+    }
+    slides[slideIndex-1].classList.add('active');
+}
+    const carouselContainer = document.querySelector('.carousel');
+
+    projects.forEach((project, index) => {
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        if (index === 0) carouselItem.classList.add('active');
+        carouselItem.innerHTML = `
+            <a href="${project.link}">
+                <img src="${project.image}" alt="${project.title}" class="rounded-lg shadow-lg">
+                <div class="carousel-content absolute bottom-4 left-4 bg-gray-900 bg-opacity-75 text-white p-4 rounded">
+                    <h2 class="text-xl font-bold">${project.description}</h2>
+                    <p>${project.title}</p>
+                </div>
+            </a>
+        `;
+        carouselContainer.insertBefore(carouselItem, carouselContainer.querySelector('.prev'));
+    });
+}
+            
         document.addEventListener('DOMContentLoaded', includeHTML);
+            includeHTML();
+    fetchProjects();
     </script>
         
     </head>
@@ -106,23 +176,20 @@
                 </div>
             </div>
             <section class="py-24 text-gray-500"> 
-                <div class="container mx-auto px-4 relative"> 
-                    <div class="mb-12">
-                        <h2 class="font-medium mb-2 text-gray-600">Some Of My Recent Projects</h2>
-                        <h3 class="font-bold text-5xl text-primary-500">Works</h3> 
-                    </div>                     
-                    <div class="-mx-4 flex flex-wrap"> 
-                        <div class="mb-12 px-4 w-full md:w-6/12"> <a class="block group rounded-lg" href="github_redirect.html"> <img src="assets/images/emotion_detector.tiff" class="group-hover:opacity-80 mb-6 rounded-xl"/> <h4 class="font-bold mb-2 text-gray-900 text-xl">Project 1</h4> <p>Linguistic Emotion Detector</p> </a> 
-                        </div>
-                        <div class="mb-12 px-4 w-full md:-mt-24 md:w-6/12"> <a class="block group rounded-lg" href="github_redirect.html"> <img src="assets/images/sentiment_analyzer.tiff" class="group-hover:opacity-80 mb-6 rounded-xl"/> <h4 class="font-bold mb-2 text-gray-900 text-xl">Project 2</h4> <p>Sentiment Analyzer</p> </a> 
-                        </div>
-                        <div class="mb-12 px-4 w-full md:w-6/12"> <a class="block group rounded-lg" href="github_redirect.html"> <img src="assets/images/gap_analyzer.tiff"/> <h4 class="font-bold mb-2 text-gray-900 text-xl">Project 3</h4> <p>Gap Analysis</p> </a> 
-                        </div>
-                        <div class="mb-12 px-4 w-full md:-mt-24 md:w-6/12"> <a class="block group rounded-lg" href="http://slimhindrance.pythonanywhere.com"> <img src="assets/images/311_heatmap.tiff" class="group-hover:opacity-80 mb-6 rounded-xl"/> <h4 class="font-bold mb-2 text-gray-900 text-xl">Project 4</h4> <p>Web &amp; App Development</p> </a> 
-                        </div>                         
-                    </div><a href="https://www.github.com/slimhindrance" class="bg-primary-500 hover:bg-primary-400 inline-block px-6 py-2 rounded text-white">View All</a> 
-                </div>                 
-            </section>
+            <section class="py-24 text-gray-500"> 
+    <div class="container mx-auto px-4 relative"> 
+        <div class="mb-12">
+            <h2 class="font-medium mb-2 text-gray-600">Some Of My Recent Projects</h2>
+            <h3 class="font-bold text-5xl text-primary-500">Works</h3> 
+        </div>
+        <div class="carousel relative mb-12">
+            <!-- Carousel items will be dynamically added here -->
+            <a class="prev absolute top-1/2 left-0 transform -translate-y-1/2 p-4 text-white bg-gray-900 bg-opacity-75 rounded-r cursor-pointer" onclick="changeSlide(-1)">&#10094;</a>
+            <a class="next absolute top-1/2 right-0 transform -translate-y-1/2 p-4 text-white bg-gray-900 bg-opacity-75 rounded-l cursor-pointer" onclick="changeSlide(1)">&#10095;</a>
+        </div>
+        <a href="https://www.github.com/slimhindrance" class="bg-primary-500 hover:bg-primary-400 inline-block px-6 py-2 rounded text-white">View All</a> 
+    </div>
+</section>
             <div class="container mx-auto">
                 <div class="lg:mx-auto lg:w-7/12">
                     <div class="flex items-center nowrap"> 
