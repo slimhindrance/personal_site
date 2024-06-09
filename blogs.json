@@ -8,15 +8,15 @@
     },
     {
         "title": "AI in Healthcare",
-        "description": "How AI is transforming the healthcare industry.",
-        "image": "https://via.placeholder.com/800x400",
+        "description": "NON-WORKING TEST: How AI is transforming the healthcare industry.",
+        "image": "assets/images/futureAutomation.tiff",
         "link": "blogs/federal_governance.html",
         "date": "2024-05-29"
     },
     {
         "title": "Future of Automation",
-        "description": "Exploring the advancements in automation technologies.",
-        "image": "https://via.placeholder.com/800x400",
+        "description": "NON-WORKING TEST: Exploring the advancements in automation technologies.",
+        "image": "assets/images/AIhealthcare.tiff",
         "link": "blogs/federal_governance.html",
         "date": "2024-05-28"
     }
