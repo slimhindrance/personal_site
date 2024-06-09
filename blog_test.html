@@ -31,6 +31,9 @@
             fetch('blogs.json')
                 .then(response => response.json())
                 .then(data => {
+                    // Sort posts by date in descending order (most recent first)
+                    data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
                     const carouselContainer = document.querySelector('.carousel');
                     const postsContainer = document.getElementById('posts-container');
 
