@@ -1,0 +1,20 @@
+[
+    {
+        "title": "Strengthening Federal Data Governance",
+        "description": "A new era of policy and practice in the federal data landscape.",
+        "image": "https://via.placeholder.com/800x400",
+        "link": "blogs/federal_governance.html"
+    },
+    {
+        "title": "AI in Healthcare",
+        "description": "How AI is transforming the healthcare industry.",
+        "image": "https://via.placeholder.com/800x400",
+        "link": "blogs/federal_governance.html"
+    },
+    {
+        "title": "Future of Automation",
+        "description": "Exploring the advancements in automation technologies.",
+        "image": "https://via.placeholder.com/800x400",
+        "link": "blogs/federal_governance.html"
+    }
+]
