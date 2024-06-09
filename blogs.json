@@ -19,5 +19,12 @@
         "image": "assets/images/futureAutomation.tiff",
         "link": "blogs/federal_governance.html",
         "date": "2024-05-28"
+    },
+    {
+        "title": "Artificial Minds",
+        "description": "Tracing the Evolution of AI.",
+        "image": "assets/images/artifical_minds.tiff",
+        "link": "blogs/artificial_minds.html",
+        "date": "2024-11-17"
     }
 ]
