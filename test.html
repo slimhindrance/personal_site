@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Page</title>
+    <script>
+        function includeHTML() {
+            const includes = document.querySelectorAll('[data-include]');
+            includes.forEach(include => {
+                const file = include.getAttribute('data-include');
+                fetch(file)
+                    .then(response => response.text())
+                    .then(data => {
+                        include.innerHTML = data;
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        }
+        document.addEventListener('DOMContentLoaded', includeHTML);
+    </script>
+</head>
+<body>
+    <!-- Include the header -->
+    <div data-include="test/header.html"></div>
+
+    <!-- Main content -->
+    <main>
+        <h1>Welcome to My Website</h1>
+        <!-- Include the testimonials section -->
+        <div data-include="test/testimonials.html"></div>
+        <p>Some other content...</p>
+    </main>
+
+    <!-- Include the footer -->
+    <div data-include="test/footer.html"></div>
+</body>
+</html>
