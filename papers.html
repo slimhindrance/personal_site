@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Papers - Chris Lindeman</title>
+    <link href="tailwind_theme/tailwind.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        function includeHTML() {
+            const includes = document.querySelectorAll('[data-include]');
+            includes.forEach(include => {
+                const file = include.getAttribute('data-include');
+                fetch(file)
+                    .then(response => response.text())
+                    .then(data => {
+                        include.innerHTML = data;
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        }
+
+        function getPdfFiles() {
+            return [
+                'pdfs/paper1.pdf'//,
+                //'pdfs/paper2.pdf',
+                //'pdfs/paper3.pdf',
+                // Add more PDF file paths here
+            ];
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            includeHTML();
+
+            const pdfFiles = getPdfFiles();
+            const swiperWrapper = document.querySelector('.swiper-wrapper');
+
+            pdfFiles.forEach(file => {
+                const slide = document.createElement('div');
+                slide.classList.add('swiper-slide');
+                slide.innerHTML = `
+                    <div class="bg-white rounded-lg shadow-lg p-6">
+                        <iframe src="${file}" width="100%" height="300px" class="mt-4"></iframe>
+                        <a href="${file}" class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded mt-4 inline-block">Open PDF</a>
+                    </div>
+                `;
+                swiperWrapper.appendChild(slide);
+            });
+
+            var swiper = new Swiper('.swiper-container', {
+                slidesPerView: 1,
+                spaceBetween: 30,
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        });
+    </script>
+</head>
+<body class="text-gray-500">
+    <div data-include="static/header.html"></div>
+    <main>
+        <section class="bg-gray-100 py-24 text-center">
+            <div class="container mx-auto px-4">
+                <h2 class="font-medium mb-2 text-gray-600">Papers</h2>
+                <h3 class="font-bold text-5xl text-primary-500">Research & Academia</h3>
+                <div class="swiper-container mt-8">
+                    <div class="swiper-wrapper">
+                        <!-- PDF slides will be populated here by JavaScript -->
+                    </div>
+                    <!-- Add Pagination -->
+                    <div class="swiper-pagination"></div>
+                    <!-- Add Navigation -->
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div data-include="static/footer.html"></div>
+</body>
+</html>
