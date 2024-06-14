@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings Slideshow</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .slideshow-container {
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+        .job-listings {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .job-listing {
+            flex: 0 0 33.3333%;
+            box-sizing: border-box;
+            padding: 20px;
+        }
+        .job-listing:not(:last-child) {
+            border-right: 1px solid #ddd;
+        }
+        .nav-buttons {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        .nav-button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="slideshow-container">
+        <div class="job-listings" id="jobListings">
+            <!-- Job listings will be inserted here -->
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-button" id="prevButton">&#10094;</button>
+            <button class="nav-button" id="nextButton">&#10095;</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const host = 'data.usajobs.gov';
+            const userAgent = 'clindeman@peregrineadvisors.com';
+            const authKey = 'XLNeOm1IYZ6JcF34elHhjQgfXeTe12NdkrDxZBOHPGc';
+            let jobIndex = 0;
+
+            async function fetchJobs() {
+                try {
+                    const response = await fetch('https://data.usajobs.gov/api/search?ResultsPerPage=10', {
+                        method: 'GET',
+                        headers: {
+                            "Host": host,
+                            "User-Agent": userAgent,
+                            "Authorization-Key": authKey
+                        }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    displayJobs(data.SearchResult.SearchResultItems);
+                } catch (error) {
+                    console.error('Error fetching jobs:', error);
+                }
+            }
+
+            function displayJobs(jobs) {
+                const jobListings = document.getElementById('jobListings');
+                jobListings.innerHTML = '';
+
+                jobs.forEach(job => {
+                    const jobElement = document.createElement('div');
+                    jobElement.className = 'job-listing';
+                    jobElement.innerHTML = `
+                        <h3>${job.MatchedObjectDescriptor.PositionTitle}</h3>
+                        <p>${job.MatchedObjectDescriptor.PositionLocationDisplay}</p>
+                        <p>${job.MatchedObjectDescriptor.UserArea.Details.MajorDuties || 'No details available'}</p>
+                    `;
+                    jobListings.appendChild(jobElement);
+                });
+            }
+
+            function slideJobs(direction) {
+                const jobListingElements = document.querySelectorAll('.job-listing');
+                if (jobListingElements.length === 0) {
+                    return;
+                }
+
+                const jobWidth = jobListingElements[0].offsetWidth;
+                const containerWidth = document.querySelector('.slideshow-container').offsetWidth;
+                const visibleJobs = Math.floor(containerWidth / jobWidth);
+                const maxIndex = jobListingElements.length - visibleJobs;
+
+                if (direction === 'next') {
+                    jobIndex = Math.min(jobIndex + 1, maxIndex);
+                } else {
+                    jobIndex = Math.max(jobIndex - 1, 0);
+                }
+
+                const offset = -jobIndex * jobWidth;
+                document.getElementById('jobListings').style.transform = `translateX(${offset}px)`;
+            }
+
+            document.getElementById('nextButton').addEventListener('click', function () {
+                slideJobs('next');
+            });
+
+            document.getElementById('prevButton').addEventListener('click', function () {
+                slideJobs('prev');
+            });
+
+            setInterval(function () {
+                slideJobs('next');
+            }, 10000);
+
+            fetchJobs();
+        });
+    </script>
+</body>
+</html>
