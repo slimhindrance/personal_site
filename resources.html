@@ -28,6 +28,21 @@
             }
         })()
     </script>
+    <script>
+        function includeHTML() {
+            const includes = document.querySelectorAll('[data-include]');
+            includes.forEach(include => {
+                const file = include.getAttribute('data-include');
+                fetch(file)
+                    .then(response => response.text())
+                    .then(data => {
+                        include.innerHTML = data;
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        }
+        document.addEventListener('DOMContentLoaded', includeHTML);
+    </script>
 </head>
 <body class="text-gray-500">
 <div data-include="static/header.html"></div>
