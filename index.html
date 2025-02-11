@@ -219,22 +219,22 @@
     <!-- Chatbot Script for Open/Close Functionality -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const chatToggleBtn = document.getElementById('chat-toggle-btn');
-            const chatWindow = document.getElementById('chat-window');
-            const chatCloseBtn = document.getElementById('chat-close-btn');
-
-            // Open Chat Window
-            chatToggleBtn.addEventListener('click', () => {
-                chatWindow.classList.remove('hidden');  // Show the chat window
-                chatToggleBtn.classList.add('hidden');  // Hide the floating button
-            });
-
-            // Close Chat Window
-            chatCloseBtn.addEventListener('click', () => {
-                chatWindow.classList.add('hidden');     // Hide the chat window
-                chatToggleBtn.classList.remove('hidden');  // Show the floating button
-            });
+        console.log("JavaScript Loaded");  // Add this line
+        const chatToggleBtn = document.getElementById('chat-toggle-btn');
+        const chatWindow = document.getElementById('chat-window');
+        const chatCloseBtn = document.getElementById('chat-close-btn');
+    
+        chatToggleBtn.addEventListener('click', () => {
+            chatWindow.classList.remove('hidden');
+            chatToggleBtn.classList.add('hidden');
         });
+    
+        chatCloseBtn.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+            chatToggleBtn.classList.remove('hidden');
+        });
+    });
+
     </script>
 
 </body>
