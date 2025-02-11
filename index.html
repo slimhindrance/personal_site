@@ -7,21 +7,41 @@
     <title>Chris Lindeman - Data Scientist & AI Strategist</title>
     <link href="tailwind_theme/tailwind.css" rel="stylesheet" type="text/css">
     <script>/* Pinegrow Interactions, do not remove */ (function () { try { if (!document.documentElement.hasAttribute('data-pg-ia-disabled')) { window.pgia_small_mq = typeof pgia_small_mq == 'string' ? pgia_small_mq : '(max-width:767px)'; window.pgia_large_mq = typeof pgia_large_mq == 'string' ? pgia_large_mq : '(min-width:768px)'; var style = document.createElement('style'); var pgcss = 'html:not(.pg-ia-no-preview) [data-pg-ia-hide=""] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show=""] {opacity:1;visibility:visible;display:block;}'; if (document.documentElement.hasAttribute('data-pg-id') && document.documentElement.hasAttribute('data-pg-mobile')) { pgia_small_mq = '(min-width:0)'; pgia_large_mq = '(min-width:99999px)' } pgcss += '@media ' + pgia_small_mq + '{ html:not(.pg-ia-no-preview) [data-pg-ia-hide="mobile"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="mobile"] {opacity:1;visibility:visible;display:block;}}'; pgcss += '@media ' + pgia_large_mq + '{html:not(.pg-ia-no-preview) [data-pg-ia-hide="desktop"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="desktop"] {opacity:1;visibility:visible;display:block;}}'; style.innerHTML = pgcss; document.querySelector('head').appendChild(style); } } catch (e) { console && console.log(e); } })()</script>
-    <script>
-        function includeHTML() {
-            const includes = document.querySelectorAll('[data-include]');
-            includes.forEach(include => {
-                const file = include.getAttribute('data-include');
-                fetch(file)
-                    .then(response => response.text())
-                    .then(data => {
-                        include.innerHTML = data;
-                    })
-                    .catch(error => console.error('Error:', error));
-            });
-        }
-        document.addEventListener('DOMContentLoaded', includeHTML);
-    </script>
+    <!-- Floating Chat Button (initially visible) -->
+<button id="chat-toggle-btn" class="fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 z-50">
+    Chat
+</button>
+
+<!-- Floating Chat Window (initially hidden) -->
+<div id="chat-window" class="hidden fixed bottom-5 right-5 w-80 h-96 bg-white shadow-xl rounded-lg overflow-hidden z-50 border">
+    <!-- Close Button inside the chat window -->
+    <button id="chat-close-btn" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">
+        ×
+    </button>
+
+    <!-- Embedded Chatbot inside the iframe -->
+    <iframe src="http://omsa.servebeer.com:1595" class="w-full h-full border-none"></iframe>
+</div>
+
+<!-- JavaScript to handle open/close functionality -->
+<script>
+    const chatToggleBtn = document.getElementById('chat-toggle-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const chatCloseBtn = document.getElementById('chat-close-btn');
+
+    // Open Chat Window
+    chatToggleBtn.addEventListener('click', () => {
+        chatWindow.classList.remove('hidden');  // Show the chat window
+        chatToggleBtn.classList.add('hidden');  // Hide the floating button
+    });
+
+    // Close Chat Window
+    chatCloseBtn.addEventListener('click', () => {
+        chatWindow.classList.add('hidden');     // Hide the chat window
+        chatToggleBtn.classList.remove('hidden');  // Show the floating button
+    });
+</script>
+
 
 </head>
 
