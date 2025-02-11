@@ -5,89 +5,78 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Chris Lindeman - Data Scientist & AI Strategist</title>
+
+    <!-- Tailwind CSS -->
     <link href="tailwind_theme/tailwind.css" rel="stylesheet" type="text/css">
-    <script>/* Pinegrow Interactions, do not remove */ (function () { try { if (!document.documentElement.hasAttribute('data-pg-ia-disabled')) { window.pgia_small_mq = typeof pgia_small_mq == 'string' ? pgia_small_mq : '(max-width:767px)'; window.pgia_large_mq = typeof pgia_large_mq == 'string' ? pgia_large_mq : '(min-width:768px)'; var style = document.createElement('style'); var pgcss = 'html:not(.pg-ia-no-preview) [data-pg-ia-hide=""] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show=""] {opacity:1;visibility:visible;display:block;}'; if (document.documentElement.hasAttribute('data-pg-id') && document.documentElement.hasAttribute('data-pg-mobile')) { pgia_small_mq = '(min-width:0)'; pgia_large_mq = '(min-width:99999px)' } pgcss += '@media ' + pgia_small_mq + '{ html:not(.pg-ia-no-preview) [data-pg-ia-hide="mobile"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="mobile"] {opacity:1;visibility:visible;display:block;}}'; pgcss += '@media ' + pgia_large_mq + '{html:not(.pg-ia-no-preview) [data-pg-ia-hide="desktop"] {opacity:0;visibility:hidden;}html:not(.pg-ia-no-preview) [data-pg-ia-show="desktop"] {opacity:1;visibility:visible;display:block;}}'; style.innerHTML = pgcss; document.querySelector('head').appendChild(style); } } catch (e) { console && console.log(e); } })()</script>
-    <!-- Floating Chat Button (initially visible) -->
 
-
+    <!-- Pinegrow Interactions -->
+    <script>
+        (function () {
+            try {
+                if (!document.documentElement.hasAttribute('data-pg-ia-disabled')) {
+                    window.pgia_small_mq = typeof pgia_small_mq === 'string' ? pgia_small_mq : '(max-width:767px)';
+                    window.pgia_large_mq = typeof pgia_large_mq === 'string' ? pgia_large_mq : '(min-width:768px)';
+                    var style = document.createElement('style');
+                    var pgcss = `
+                        html:not(.pg-ia-no-preview) [data-pg-ia-hide=""] {opacity:0;visibility:hidden;}
+                        html:not(.pg-ia-no-preview) [data-pg-ia-show=""] {opacity:1;visibility:visible;display:block;}
+                    `;
+                    if (document.documentElement.hasAttribute('data-pg-id') && document.documentElement.hasAttribute('data-pg-mobile')) {
+                        pgia_small_mq = '(min-width:0)';
+                        pgia_large_mq = '(min-width:99999px)';
+                    }
+                    pgcss += `@media ${pgia_small_mq} {
+                        html:not(.pg-ia-no-preview) [data-pg-ia-hide="mobile"] {opacity:0;visibility:hidden;}
+                        html:not(.pg-ia-no-preview) [data-pg-ia-show="mobile"] {opacity:1;visibility:visible;display:block;}
+                    }`;
+                    pgcss += `@media ${pgia_large_mq} {
+                        html:not(.pg-ia-no-preview) [data-pg-ia-hide="desktop"] {opacity:0;visibility:hidden;}
+                        html:not(.pg-ia-no-preview) [data-pg-ia-show="desktop"] {opacity:1;visibility:visible;display:block;}
+                    }`;
+                    style.innerHTML = pgcss;
+                    document.querySelector('head').appendChild(style);
+                }
+            } catch (e) {
+                console && console.log(e);
+            }
+        })();
+    </script>
 
 </head>
 
 <body class="text-gray-500">
     <div data-include="static/header.html"></div>
+
     <main>
-       <button id="chat-toggle-btn" class="fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 z-50">
-    Chat
-</button>
-
-<!-- Floating Chat Window (initially hidden) -->
-<div id="chat-window" class="hidden fixed bottom-5 right-5 w-80 h-96 bg-white shadow-xl rounded-lg overflow-hidden z-50 border">
-    <!-- Close Button inside the chat window -->
-    <button id="chat-close-btn" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">
-        ×
-    </button>
-
-    <!-- Embedded Chatbot inside the iframe -->
-    <iframe src="http://omsa.servebeer.com:1595" class="w-full h-full border-none"></iframe>
-</div>
-
-<!-- JavaScript to handle open/close functionality -->
-<script>
-    const chatToggleBtn = document.getElementById('chat-toggle-btn');
-    const chatWindow = document.getElementById('chat-window');
-    const chatCloseBtn = document.getElementById('chat-close-btn');
-
-    // Open Chat Window
-    chatToggleBtn.addEventListener('click', () => {
-        chatWindow.classList.remove('hidden');  // Show the chat window
-        chatToggleBtn.classList.add('hidden');  // Hide the floating button
-    });
-
-    // Close Chat Window
-    chatCloseBtn.addEventListener('click', () => {
-        chatWindow.classList.add('hidden');     // Hide the chat window
-        chatToggleBtn.classList.remove('hidden');  // Show the floating button
-    });
-</script>
-
-        <section class="bg-gray-100 relative text-center">
-            <div class="container mx-auto px-4 py-24">
-                <div class="-mx-4 flex flex-wrap items-center justify-center space-y-6 lg:space-y-0">
-                    <div class="px-4 w-full md:w-10/12 xl:w-7/12">
-                        <img class="bg-white inline-flex mb-6 p-2 rounded-full shadow-xl w-1/2" alt="..." width="800"
-                            height="800" src="assets/images/landing_image.tiff">
-                        <h1 class="font-bold mb-2 text-4xl text-gray-900 md:leading-tight lg:leading-tight lg:text-5xl">
-                            Chris Lindeman: Technical Solutions Expert</h1>
-                        <p></p>
-                        <h1 class="font-bold mb-2 text-4xl text-gray-900 md:leading-tight lg:leading-tight lg:text-5xl">
+        <!-- Content Section -->
+        <section class="bg-gray-100 text-center py-24">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-wrap items-center justify-center space-y-6 lg:space-y-0">
+                    <div class="w-full md:w-10/12 xl:w-7/12">
+                        <img src="assets/images/landing_image.tiff" alt="Landing Image"
+                             class="bg-white inline-flex mb-6 p-2 rounded-full shadow-xl w-1/2">
+                        <h1 class="font-bold text-4xl text-gray-900 lg:text-5xl leading-tight mb-2">
+                            Chris Lindeman: Technical Solutions Expert
                         </h1>
-                        <p class="mb-6">For years, Chris has been building bespoke solutions to everyday and uncommon
-                            problems locally and in the cloud, through simple process redesgin to complex AI systems
-                            integration.</p>
-                        <div class="flex-wrap inline-flex space-x-2">
-                            <a href="https://github.com/slimhindrance" aria-label="github"
-                                class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
-                                <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png"
-                                    alt="Logo" class="h-5 w-5 rounded-full">
+                        <p class="mb-6">For years, Chris has been building bespoke solutions to everyday and uncommon problems locally and in the cloud, from simple process redesign to complex AI systems integration.</p>
+                        <div class="flex space-x-2">
+                            <a href="https://github.com/slimhindrance" aria-label="GitHub" class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
+                                <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub Logo" class="h-5 w-5 rounded-full">
                             </a>
-                            <a href="https://chrislindeman.substack.com" aria-label="subsstack"
-                                class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
-                                <img src="https://substack.com/img/substack.png" alt="Logo"
-                                    class="h-5 w-5 rounded-full">
+                            <a href="https://chrislindeman.substack.com" aria-label="Substack" class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
+                                <img src="https://substack.com/img/substack.png" alt="Substack Logo" class="h-5 w-5 rounded-full">
                             </a>
-                            <!--<a href="#" aria-label="instagram" class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white"> <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" data-darkreader-inline-fill="" style="--darkreader-inline-fill: currentColor;"> 
-                                        <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm6.5-.25a1.25 1.25 0 0 0-2.5 0 1.25 1.25 0 0 0 2.5 0zM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6z"></path>                                         
-                                    </svg></a>-->
-                            <a href="https://www.linkedin.com/in/cwlindeman" aria-label="linkedin"
-                                class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
-                                <img src="assets/images/linkedinlogo.png" alt="Logo" class="h-5 w-5 rounded-full">
+                            <a href="https://www.linkedin.com/in/cwlindeman" aria-label="LinkedIn" class="bg-primary-500 hover:bg-primary-600 p-2 rounded-full text-white">
+                                <img src="assets/images/linkedinlogo.png" alt="LinkedIn Logo" class="h-5 w-5 rounded-full">
                             </a>
-
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <!-- Additional Sections (e.g., About Me, Projects) -->
+        <!-- ... (Add your other sections here) ... -->
         <section class="py-24 text-gray-500">
             <div class="container mx-auto px-4 relative">
                 <div class="flex flex-wrap -mx-4  items-center">
@@ -208,43 +197,44 @@
         </div>
 
         <div data-include="static/testimonials.html"></div>
-        <!-- Floating Chatbot Window -->
-         <!-- Floating Chatbot Window -->
-        <div id="chatbot" class="fixed bottom-5 right-5 w-80 h-96 bg-white shadow-xl rounded-lg overflow-hidden z-50" style="display: block; border: 2px solid red;">
-            <iframe src="http://omsa.servebeer.com:1595" class="w-full h-full border-none"></iframe>
-            <button id="close-btn" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">×</button>
-        </div>
 
- 
+        <!-- Floating Chat Button (initially visible) -->
+        <button id="chat-toggle-btn" class="fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 z-50">
+            Chat
+        </button>
+
+        <!-- Floating Chat Window (initially hidden) -->
+        <div id="chat-window" class="hidden fixed bottom-5 right-5 w-80 h-96 bg-white shadow-xl rounded-lg overflow-hidden z-50 border">
+            <!-- Close Button inside the chat window -->
+            <button id="chat-close-btn" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">×</button>
+
+            <!-- Embedded Chatbot inside the iframe -->
+            <iframe src="http://omsa.servebeer.com:1595" class="w-full h-full border-none"></iframe>
+        </div>
     </main>
+
     <div data-include="static/footer.html"></div>
+
+    <!-- Chatbot Script for Open/Close Functionality -->
     <script>
-    document.getElementById('close-btn').addEventListener('click', function () {
-        document.getElementById('chatbot').style.display = 'none';
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatToggleBtn = document.getElementById('chat-toggle-btn');
+            const chatWindow = document.getElementById('chat-window');
+            const chatCloseBtn = document.getElementById('chat-close-btn');
+
+            // Open Chat Window
+            chatToggleBtn.addEventListener('click', () => {
+                chatWindow.classList.remove('hidden');  // Show the chat window
+                chatToggleBtn.classList.add('hidden');  // Hide the floating button
+            });
+
+            // Close Chat Window
+            chatCloseBtn.addEventListener('click', () => {
+                chatWindow.classList.add('hidden');     // Hide the chat window
+                chatToggleBtn.classList.remove('hidden');  // Show the floating button
+            });
         });
     </script>
-<!-- Floating Reopen Button -->
-<button id="open-btn" class="hidden fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 z-50">
-    Chat
-</button>
-
-<script>document.addEventListener('DOMContentLoaded', function () {
-    const closeBtn = document.getElementById('close-btn');
-    const chatbot = document.getElementById('chatbot');
-    const openBtn = document.getElementById('open-btn');
-
-    closeBtn.addEventListener('click', function () {
-        chatbot.style.display = 'none';
-        openBtn.classList.remove('hidden');
-    });
-
-    openBtn.addEventListener('click', function () {
-        chatbot.style.display = 'block';
-        openBtn.classList.add('hidden');
-    });
-});
-</script>
 
 </body>
-
 </html>
