@@ -187,21 +187,43 @@
 
         <div data-include="static/testimonials.html"></div>
         <!-- Floating Chatbot Window -->
-        <div class="chatbot-container" id="chatbot">
-            <iframe src="https://omsa.servebeer.com:1595" /* URL of the chatbot interface */ width="100%" /* The iframe
-                takes the full width of the parent element */ height="600px" /* Fixed height of the iframe */
-                frameBorder="0" /* No border around the iframe */ title="Chatbot for Chris" /* Descriptive title for
-                accessibility purposes */ style={{ border: 'none' }} /* Additional styling options */></iframe>
-        </div>
+         <!-- Floating Chatbot Window -->
+        <div id="chatbot" class="fixed bottom-5 right-5 w-80 h-96 bg-white shadow-xl rounded-lg overflow-hidden z-50">
+            <iframe src="http://omsa.servebeer.com:1595" class="w-full h-full border-none"></iframe>
 
+            <!-- Close Button -->
+            <button id="close-btn" class="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold">
+                ×
+            </button>
+        </div>
+ 
     </main>
     <div data-include="static/footer.html"></div>
     <script>
-        // Close Button Functionality
-        document.querySelector('.chatbot-container::before').addEventListener('click', function () {
-            document.getElementById('chatbot').style.display = 'none';
+    document.getElementById('close-btn').addEventListener('click', function () {
+        document.getElementById('chatbot').style.display = 'none';
         });
     </script>
+<!-- Floating Reopen Button -->
+<button id="open-btn" class="hidden fixed bottom-5 right-5 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 z-50">
+    Chat
+</button>
+
+<script>
+    const closeBtn = document.getElementById('close-btn');
+    const chatbot = document.getElementById('chatbot');
+    const openBtn = document.getElementById('open-btn');
+
+    closeBtn.addEventListener('click', function () {
+        chatbot.style.display = 'none';
+        openBtn.classList.remove('hidden');
+    });
+
+    openBtn.addEventListener('click', function () {
+        chatbot.style.display = 'block';
+        openBtn.classList.add('hidden');
+    });
+</script>
 
 </body>
 
