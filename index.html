@@ -206,7 +206,7 @@
     Chat
 </button>
 
-<script>
+<script>document.addEventListener('DOMContentLoaded', function () {
     const closeBtn = document.getElementById('close-btn');
     const chatbot = document.getElementById('chatbot');
     const openBtn = document.getElementById('open-btn');
@@ -220,6 +220,7 @@
         chatbot.style.display = 'block';
         openBtn.classList.add('hidden');
     });
+});
 </script>
 
 </body>
