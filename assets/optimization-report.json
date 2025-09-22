@@ -1,0 +1,113 @@
+{
+  "timestamp": "2025-09-22T17:39:04.681Z",
+  "config": {
+    "maxWidth": 1920,
+    "quality": 85,
+    "webpQuality": 80,
+    "breakpoints": [
+      320,
+      640,
+      768,
+      1024,
+      1280,
+      1920
+    ],
+    "thumbnailSizes": [
+      150,
+      300,
+      600
+    ],
+    "supportedFormats": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp",
+      ".gif",
+      ".tiff",
+      ".bmp"
+    ]
+  },
+  "summary": {
+    "totalProcessed": 0,
+    "totalSkipped": 0,
+    "totalErrors": 9
+  },
+  "details": {
+    "projects": {
+      "processed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "files": []
+    },
+    "papers": {
+      "processed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "files": []
+    },
+    "testimonials": {
+      "processed": 0,
+      "skipped": 0,
+      "errors": 0,
+      "files": []
+    },
+    "general": {
+      "processed": 0,
+      "skipped": 0,
+      "errors": 9,
+      "files": [
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/profile_brick.jpeg",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/profile_brick.jpeg: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/profile_hair.png",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/profile_hair.png: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/lindy_chat_icon.png",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/lindy_chat_icon.png: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/gravatar.png",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/gravatar.png: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/sentiment_analyzer.tiff",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/sentiment_analyzer.tiff: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/landing_image.tiff",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/landing_image.tiff: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/gap_analyzer.tiff",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/gap_analyzer.tiff: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/emotion_detector.tiff",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/emotion_detector.tiff: unable to open for write\nunix error: No such file or directory"
+        },
+        {
+          "original": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/311_heatmap.tiff",
+          "status": "error",
+          "error": "/Users/christopherlindeman/Desktop/Projects/personal_site/assets/images/general/311_heatmap.tiff: unable to open for write\nunix error: No such file or directory"
+        }
+      ]
+    }
+  },
+  "buildInfo": {
+    "nodeVersion": "v24.7.0",
+    "sharpVersion": "0.32.6",
+    "platform": "darwin",
+    "buildId": "local"
+  }
+}

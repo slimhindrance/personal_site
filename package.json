@@ -1,0 +1,60 @@
+{
+  "name": "personal-site-content-processor",
+  "version": "2.0.0",
+  "description": "Automated content processing pipeline for dynamic portfolio site",
+  "main": "scripts/validate-content.js",
+  "scripts": {
+    "validate": "node scripts/validate-content.js",
+    "process:projects": "node scripts/process-projects.js",
+    "process:papers": "node scripts/process-papers.js",
+    "process:papers:enhanced": "node scripts/process-papers-enhanced.js",
+    "process:testimonials": "node scripts/process-testimonials.js",
+    "optimize:images": "node scripts/optimize-images.js",
+    "generate:metadata": "node scripts/generate-metadata.js",
+    "generate:search": "node scripts/generate-search-index.js",
+    "generate:search:enhanced": "node scripts/generate-enhanced-search-index.js",
+    "build:all": "npm run validate && npm run process:projects && npm run process:papers && npm run process:testimonials && npm run optimize:images && npm run generate:metadata && npm run generate:search",
+    "build:enhanced": "npm run validate && npm run process:projects && npm run process:papers:enhanced && npm run process:testimonials && npm run optimize:images && npm run generate:metadata && npm run generate:search:enhanced",
+    "dev:watch": "nodemon --watch content --exec 'npm run build:all'",
+    "dev:watch:enhanced": "nodemon --watch content --exec 'npm run build:enhanced'",
+    "test": "echo 'No tests specified' && exit 0"
+  },
+  "keywords": [
+    "portfolio",
+    "content-management",
+    "github-actions",
+    "automation",
+    "static-site"
+  ],
+  "author": "Christopher Lindeman",
+  "license": "MIT",
+  "dependencies": {
+    "pdf-parse": "^1.1.1",
+    "sharp": "^0.32.6",
+    "markdown-it": "^13.0.2",
+    "gray-matter": "^4.0.3",
+    "fs-extra": "^11.1.1",
+    "glob": "^10.3.10",
+    "js-yaml": "^4.1.0",
+    "natural": "^6.12.0",
+    "stopword": "^2.0.0",
+    "compromise": "^14.10.0",
+    "stemmer": "^2.0.1",
+    "pdf2pic": "^2.1.4",
+    "tesseract.js": "^5.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/personal_site.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/personal_site/issues"
+  },
+  "homepage": "https://your-username.github.io/personal_site"
+}

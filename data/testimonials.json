@@ -1,0 +1,38 @@
+{
+  "testimonials": [],
+  "metadata": {
+    "total": 0,
+    "featured": 0,
+    "verified": 0,
+    "withRating": 0,
+    "averageRating": null,
+    "ratingDistribution": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0
+    },
+    "projects": [],
+    "companies": [],
+    "sentimentAnalysis": {
+      "distribution": {
+        "positive": 0,
+        "neutral": 0,
+        "negative": 0
+      },
+      "averageScore": null,
+      "percentage": {
+        "positive": null,
+        "neutral": null,
+        "negative": null
+      }
+    },
+    "lastUpdated": "2025-09-22T17:39:04.439Z",
+    "buildInfo": {
+      "nodeVersion": "v24.7.0",
+      "platform": "darwin",
+      "buildId": "local"
+    }
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "name": "Chris Lindeman",
+  "title": "Technical Solutions Expert",
+  "subtitle": "Data Scientist & AI Strategist",
+  "bio": "For years, Chris has been building bespoke solutions to everyday and uncommon problems locally and in the cloud, through simple process redesign to complex AI systems integration.",
+  "story": "I've always been a builder. Shed? Yep. Potato gun? No problem. Hell, I even built my own house from the shambles of an abandoned and rotting building. In 2012 I was hit by a drunk driver, and nearly died. My leg was cut apart and I was bound to a wheelchair while I spent that year having 11 surgeries to save my leg. I couldn't continue working the oilfields, so I needed a change. I went back to school and started thinking about what I'd do when I got back on my feet (literally). Now I'm back to building things - digital solutions to other people's problems.",
+  "stats": {
+    "experience": 4,
+    "projectsCompleted": 10,
+    "degreesEarned": 3,
+    "clientSatisfaction": 98,
+    "technologiesMastered": 25
+  },
+  "contact": {
+    "email": "chris@clindeman.com",
+    "phone": "+1 (555) 123-4567",
+    "location": "Remote / Available for Travel",
+    "timezone": "CST (UTC-6)"
+  },
+  "social": {
+    "github": "https://github.com/slimhindrance",
+    "linkedin": "https://linkedin.com/in/chris-lindeman",
+    "twitter": "https://twitter.com/slimhindrance",
+    "youtube": "#",
+    "instagram": "#"
+  },
+  "expertise": [
+    {
+      "category": "Data Science & AI",
+      "skills": [
+        "Machine Learning",
+        "Natural Language Processing",
+        "Deep Learning",
+        "Computer Vision",
+        "Statistical Analysis",
+        "Predictive Modeling"
+      ]
+    },
+    {
+      "category": "Programming Languages",
+      "skills": [
+        "Python",
+        "R",
+        "JavaScript",
+        "SQL",
+        "Java",
+        "C++"
+      ]
+    },
+    {
+      "category": "Web Development",
+      "skills": [
+        "React",
+        "Vue.js",
+        "Node.js",
+        "Django",
+        "Flask",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "category": "Cloud & DevOps",
+      "skills": [
+        "AWS",
+        "Docker",
+        "Kubernetes",
+        "CI/CD",
+        "Terraform",
+        "MongoDB"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Master of Science in Data Science",
+      "institution": "University of Technology",
+      "year": "2020",
+      "honors": "Magna Cum Laude"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "institution": "State University",
+      "year": "2018",
+      "honors": "Summa Cum Laude"
+    },
+    {
+      "degree": "Associate of Applied Science in Information Technology",
+      "institution": "Community College",
+      "year": "2016",
+      "honors": "Dean's List"
+    }
+  ],
+  "certifications": [
+    "AWS Certified Solutions Architect",
+    "Google Cloud Professional Data Engineer",
+    "Microsoft Azure AI Engineer",
+    "Certified Kubernetes Administrator",
+    "TensorFlow Developer Certificate"
+  ],
+  "services": [
+    {
+      "title": "AI & Machine Learning Solutions",
+      "description": "Custom AI models and machine learning pipelines for business automation and insights",
+      "technologies": ["TensorFlow", "PyTorch", "scikit-learn", "MLflow"]
+    },
+    {
+      "title": "Data Analytics & Visualization",
+      "description": "Transform raw data into actionable insights with interactive dashboards and reports",
+      "technologies": ["Power BI", "Tableau", "D3.js", "Python", "R"]
+    },
+    {
+      "title": "Web Application Development",
+      "description": "Full-stack web applications with modern frameworks and cloud deployment",
+      "technologies": ["React", "Django", "Flask", "Node.js", "AWS"]
+    },
+    {
+      "title": "Process Automation",
+      "description": "Streamline business operations with intelligent automation and workflow optimization",
+      "technologies": ["Python", "RPA", "API Integration", "Workflow Engines"]
+    }
+  ],
+  "availability": {
+    "status": "Available for new projects",
+    "nextAvailability": "2024-10-01",
+    "workingHours": "9 AM - 6 PM CST",
+    "responseTime": "Within 24 hours"
+  }
+}

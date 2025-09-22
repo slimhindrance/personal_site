@@ -1,0 +1,355 @@
+name: Error Handling and Recovery
+on:
+  workflow_run:
+    workflows: ["Content Processor Pipeline"]
+    types: [completed]
+    branches: [main, master]
+
+jobs:
+  error-analysis:
+    name: Analyze Processing Errors
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Download workflow logs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            try {
+              const workflowRun = await github.rest.actions.getWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: ${{ github.event.workflow_run.id }}
+              });
+
+              const jobs = await github.rest.actions.listJobsForWorkflowRun({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                run_id: ${{ github.event.workflow_run.id }}
+              });
+
+              let errorSummary = `# Workflow Error Analysis\n\n`;
+              errorSummary += `**Workflow:** ${workflowRun.data.name}\n`;
+              errorSummary += `**Run ID:** ${workflowRun.data.id}\n`;
+              errorSummary += `**Conclusion:** ${workflowRun.data.conclusion}\n`;
+              errorSummary += `**Started:** ${workflowRun.data.run_started_at}\n\n`;
+
+              errorSummary += `## Failed Jobs\n\n`;
+
+              for (const job of jobs.data.jobs) {
+                if (job.conclusion === 'failure') {
+                  errorSummary += `### ${job.name}\n`;
+                  errorSummary += `- **Status:** ${job.conclusion}\n`;
+                  errorSummary += `- **Started:** ${job.started_at}\n`;
+                  errorSummary += `- **Completed:** ${job.completed_at}\n`;
+
+                  // Analyze common error patterns
+                  const steps = job.steps || [];
+                  const failedSteps = steps.filter(step => step.conclusion === 'failure');
+
+                  if (failedSteps.length > 0) {
+                    errorSummary += `- **Failed Steps:**\n`;
+                    failedSteps.forEach(step => {
+                      errorSummary += `  - ${step.name}\n`;
+                    });
+                  }
+
+                  errorSummary += `\n`;
+                }
+              }
+
+              // Write error analysis
+              fs.writeFileSync('error-analysis.md', errorSummary);
+
+            } catch (error) {
+              console.error('Error analyzing workflow:', error);
+              fs.writeFileSync('error-analysis.md', `# Error Analysis Failed\n\nCould not analyze workflow errors: ${error.message}`);
+            }
+
+      - name: Analyze error patterns
+        run: |
+          node -e "
+            const fs = require('fs');
+            const analysis = fs.readFileSync('error-analysis.md', 'utf-8');
+
+            const errorPatterns = {
+              'pdf-parse': /pdf.*parse.*error|failed.*pdf/i,
+              'image-optimization': /sharp.*error|image.*optimization.*failed/i,
+              'memory': /out.*of.*memory|heap.*out.*of.*memory/i,
+              'disk-space': /no.*space.*left|enospc/i,
+              'network': /network.*error|econnreset|timeout/i,
+              'permissions': /permission.*denied|eacces/i,
+              'dependency': /cannot.*find.*module|npm.*install.*failed/i
+            };
+
+            let detectedErrors = [];
+
+            for (const [type, pattern] of Object.entries(errorPatterns)) {
+              if (pattern.test(analysis)) {
+                detectedErrors.push(type);
+              }
+            }
+
+            const suggestions = {
+              'pdf-parse': [
+                'Check PDF file integrity and format',
+                'Verify pdf-parse version compatibility',
+                'Implement fallback for corrupted PDFs'
+              ],
+              'image-optimization': [
+                'Check image file formats and sizes',
+                'Verify Sharp dependencies installation',
+                'Implement graceful degradation for unsupported formats'
+              ],
+              'memory': [
+                'Process files in smaller batches',
+                'Implement streaming for large files',
+                'Increase GitHub Actions memory allocation'
+              ],
+              'disk-space': [
+                'Clean up temporary files during processing',
+                'Use streaming operations',
+                'Implement file size limits'
+              ],
+              'network': [
+                'Implement retry logic',
+                'Add network timeout handling',
+                'Use cached dependencies'
+              ],
+              'permissions': [
+                'Check file permissions in content directory',
+                'Verify GitHub Actions permissions',
+                'Review write access to output directories'
+              ],
+              'dependency': [
+                'Update package.json dependencies',
+                'Clear npm cache and reinstall',
+                'Check Node.js version compatibility'
+              ]
+            };
+
+            let recoveryPlan = '\\n## Detected Error Types\\n\\n';
+
+            if (detectedErrors.length === 0) {
+              recoveryPlan += 'No specific error patterns detected. Manual investigation required.\\n';
+            } else {
+              detectedErrors.forEach(errorType => {
+                recoveryPlan += \`### \${errorType}\\n\`;
+                suggestions[errorType].forEach(suggestion => {
+                  recoveryPlan += \`- \${suggestion}\\n\`;
+                });
+                recoveryPlan += '\\n';
+              });
+            }
+
+            // Append to analysis file
+            fs.appendFileSync('error-analysis.md', recoveryPlan);
+
+            console.log('Error analysis completed');
+            console.log('Detected error types:', detectedErrors.join(', ') || 'None');
+          "
+
+      - name: Create recovery suggestions
+        run: |
+          cat >> error-analysis.md << 'EOF'
+
+          ## Immediate Recovery Steps
+
+          1. **Check Content Integrity**
+             ```bash
+             npm run validate
+             ```
+
+          2. **Process Content Types Individually**
+             ```bash
+             npm run process:projects
+             npm run process:papers
+             npm run process:testimonials
+             ```
+
+          3. **Skip Image Optimization (if needed)**
+             - Temporarily disable image processing
+             - Use original images as fallback
+
+          4. **Generate Minimal Data**
+             ```bash
+             npm run generate:metadata
+             ```
+
+          ## Prevention Measures
+
+          - Implement file size limits in validation
+          - Add more granular error handling in scripts
+          - Use progressive enhancement for optional features
+          - Add health checks before processing
+
+          ## Manual Fallback
+
+          If automated recovery fails:
+          1. Check individual content files manually
+          2. Use backup data from previous successful build
+          3. Generate minimal JSON files with essential data only
+          4. Deploy with reduced functionality temporarily
+
+          EOF
+
+      - name: Create issue for failed workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const analysis = fs.readFileSync('error-analysis.md', 'utf-8');
+
+            const issue = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Content Processing Workflow Failed - Build ${context.runId}`,
+              body: `${analysis}\n\n**Auto-generated from failed workflow run:** https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${{ github.event.workflow_run.id }}`,
+              labels: ['bug', 'automated', 'content-processing']
+            });
+
+            console.log(`Created issue #${issue.data.number}`);
+
+      - name: Attempt automatic recovery
+        run: |
+          echo "🔄 Attempting automatic recovery..."
+
+          # Create minimal data files to prevent site breakage
+          mkdir -p data/
+
+          # Create empty projects.json
+          cat > data/projects.json << 'EOF'
+          {
+            "projects": [],
+            "metadata": {
+              "total": 0,
+              "lastUpdated": "${{ github.event.workflow_run.run_started_at }}",
+              "error": "Content processing failed - using fallback data",
+              "buildInfo": {
+                "buildId": "${{ github.run_id }}",
+                "recovery": true
+              }
+            }
+          }
+          EOF
+
+          # Create empty papers.json
+          cat > data/papers.json << 'EOF'
+          {
+            "papers": [],
+            "metadata": {
+              "total": 0,
+              "lastUpdated": "${{ github.event.workflow_run.run_started_at }}",
+              "error": "Content processing failed - using fallback data",
+              "buildInfo": {
+                "buildId": "${{ github.run_id }}",
+                "recovery": true
+              }
+            }
+          }
+          EOF
+
+          # Create empty testimonials.json
+          cat > data/testimonials.json << 'EOF'
+          {
+            "testimonials": [],
+            "metadata": {
+              "total": 0,
+              "lastUpdated": "${{ github.event.workflow_run.run_started_at }}",
+              "error": "Content processing failed - using fallback data",
+              "buildInfo": {
+                "buildId": "${{ github.run_id }}",
+                "recovery": true
+              }
+            }
+          }
+          EOF
+
+          # Create minimal site metadata
+          cat > data/site-metadata.json << 'EOF'
+          {
+            "site": {
+              "url": "${{ github.event.repository.html_url }}",
+              "name": "Christopher Lindeman Portfolio",
+              "description": "Software Engineer & AI Researcher Portfolio",
+              "error": "Content processing failed - using minimal data"
+            },
+            "content": {
+              "statistics": {
+                "projects": { "total": 0 },
+                "papers": { "total": 0 },
+                "testimonials": { "total": 0 }
+              }
+            },
+            "build": {
+              "timestamp": "${{ github.event.workflow_run.run_started_at }}",
+              "buildId": "${{ github.run_id }}",
+              "recovery": true,
+              "error": "Automated recovery after processing failure"
+            }
+          }
+          EOF
+
+          echo "✅ Created fallback data files"
+
+      - name: Commit recovery data
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Recovery Bot"
+
+          git add data/ error-analysis.md
+
+          if ! git diff --staged --quiet; then
+            git commit -m "🚨 Emergency recovery: Create fallback data after processing failure
+
+            - Generated minimal data files to prevent site breakage
+            - Created error analysis and recovery suggestions
+            - Site will function with reduced content until issues are resolved
+
+            Recovery Build: ${{ github.run_id }}
+            Failed Workflow: ${{ github.event.workflow_run.id }}"
+
+            git push
+            echo "✅ Committed recovery data"
+          else
+            echo "ℹ️ No changes to commit"
+          fi
+
+  notify-failure:
+    name: Notify on Failure
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    needs: error-analysis
+
+    steps:
+      - name: Workflow failure summary
+        run: |
+          echo "## 🚨 Content Processing Failure" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Failed Workflow:** ${{ github.event.workflow_run.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run ID:** ${{ github.event.workflow_run.id }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.event.workflow_run.head_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.event.workflow_run.head_sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Actions Taken" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Error analysis completed" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Recovery data generated" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Issue created for investigation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Site functionality preserved with fallback data" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review the created issue for detailed error analysis" >> $GITHUB_STEP_SUMMARY
+          echo "2. Fix identified content issues" >> $GITHUB_STEP_SUMMARY
+          echo "3. Re-run the content processor workflow" >> $GITHUB_STEP_SUMMARY
+          echo "4. Verify full functionality is restored" >> $GITHUB_STEP_SUMMARY

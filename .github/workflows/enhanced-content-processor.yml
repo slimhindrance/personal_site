@@ -1,0 +1,513 @@
+name: Enhanced Content Processor Pipeline (Phase 2)
+
+on:
+  push:
+    paths:
+      - 'content/**'
+      - '.github/workflows/enhanced-content-processor.yml'
+      - 'scripts/process-papers-enhanced.js'
+      - 'scripts/generate-enhanced-search-index.js'
+  pull_request:
+    paths:
+      - 'content/**'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild all content'
+        required: false
+        default: false
+        type: boolean
+      enable_nlp:
+        description: 'Enable full NLP processing (resource intensive)'
+        required: false
+        default: true
+        type: boolean
+      processing_mode:
+        description: 'Processing mode'
+        required: false
+        default: 'enhanced'
+        type: choice
+        options:
+          - 'basic'
+          - 'enhanced'
+          - 'full-nlp'
+
+env:
+  NODE_VERSION: '18'
+  CACHE_VERSION: 'v2-enhanced'
+
+jobs:
+  validate-and-prepare:
+    name: Validate Content and Prepare Environment
+    runs-on: ubuntu-latest
+    outputs:
+      has-papers: ${{ steps.check.outputs.has-papers }}
+      content-changed: ${{ steps.changes.outputs.content }}
+      processing-mode: ${{ steps.config.outputs.processing-mode }}
+      enable-nlp: ${{ steps.config.outputs.enable-nlp }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check for content changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            content:
+              - 'content/**'
+            papers:
+              - 'content/papers/**'
+            enhanced-scripts:
+              - 'scripts/process-papers-enhanced.js'
+              - 'scripts/generate-enhanced-search-index.js'
+
+      - name: Configure processing parameters
+        id: config
+        run: |
+          # Determine processing mode
+          if [ "${{ github.event.inputs.processing_mode }}" != "" ]; then
+            echo "processing-mode=${{ github.event.inputs.processing_mode }}" >> $GITHUB_OUTPUT
+          elif [ "${{ steps.changes.outputs.enhanced-scripts }}" == "true" ]; then
+            echo "processing-mode=enhanced" >> $GITHUB_OUTPUT
+          else
+            echo "processing-mode=basic" >> $GITHUB_OUTPUT
+          fi
+
+          # Determine NLP enablement
+          if [ "${{ github.event.inputs.enable_nlp }}" == "false" ]; then
+            echo "enable-nlp=false" >> $GITHUB_OUTPUT
+          else
+            echo "enable-nlp=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check content directories
+        id: check
+        run: |
+          echo "has-papers=$([ -d content/papers ] && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js for validation
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies for validation
+        run: |
+          npm ci --only=production
+
+      - name: Validate content structure
+        run: |
+          node scripts/validate-content.js
+        if: steps.changes.outputs.content == 'true' || github.event.inputs.force_rebuild == 'true'
+
+  process-papers-enhanced:
+    name: Enhanced Paper Processing with NLP
+    runs-on: ubuntu-latest
+    needs: validate-and-prepare
+    if: |
+      needs.validate-and-prepare.outputs.has-papers == 'true' &&
+      (needs.validate-and-prepare.outputs.content-changed == 'true' || github.event.inputs.force_rebuild == 'true') &&
+      needs.validate-and-prepare.outputs.processing-mode != 'basic'
+
+    strategy:
+      matrix:
+        chunk: [1] # Can be extended for parallel processing of large PDF sets
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js with enhanced caching
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Cache NLP models and dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.npm
+            ~/.cache/natural
+            node_modules/.cache
+          key: ${{ runner.os }}-nlp-${{ env.CACHE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nlp-${{ env.CACHE_VERSION }}-
+            ${{ runner.os }}-nlp-
+
+      - name: Install enhanced dependencies
+        run: |
+          npm ci
+
+          # Install additional NLP dependencies if needed
+          if [ "${{ needs.validate-and-prepare.outputs.enable-nlp }}" == "true" ]; then
+            echo "📦 Installing enhanced NLP dependencies..."
+            npm install --no-save compromise@latest natural@latest stopwords@latest stemmer@latest
+          fi
+
+      - name: Pre-process large PDFs check
+        id: pdf-check
+        run: |
+          if [ -d "content/papers" ]; then
+            TOTAL_SIZE=$(find content/papers -name "*.pdf" -exec stat -f%z {} + 2>/dev/null | awk '{s+=$1} END {print s}' || echo "0")
+            PDF_COUNT=$(find content/papers -name "*.pdf" | wc -l)
+
+            echo "pdf-count=${PDF_COUNT}" >> $GITHUB_OUTPUT
+            echo "total-size=${TOTAL_SIZE}" >> $GITHUB_OUTPUT
+
+            echo "📊 Found ${PDF_COUNT} PDFs, total size: $(echo $TOTAL_SIZE | awk '{printf "%.2f MB", $1/1024/1024}')"
+
+            # Set timeout based on content size
+            if [ $TOTAL_SIZE -gt 104857600 ]; then  # > 100MB
+              echo "timeout=3600" >> $GITHUB_OUTPUT  # 60 minutes
+            elif [ $TOTAL_SIZE -gt 52428800 ]; then  # > 50MB
+              echo "timeout=1800" >> $GITHUB_OUTPUT  # 30 minutes
+            else
+              echo "timeout=900" >> $GITHUB_OUTPUT   # 15 minutes
+            fi
+          else
+            echo "pdf-count=0" >> $GITHUB_OUTPUT
+            echo "total-size=0" >> $GITHUB_OUTPUT
+            echo "timeout=300" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Enhanced paper processing
+        timeout-minutes: ${{ fromJSON(steps.pdf-check.outputs.timeout) / 60 }}
+        run: |
+          echo "🚀 Starting enhanced paper processing..."
+          echo "📊 Processing ${{ steps.pdf-check.outputs.pdf-count }} PDFs"
+          echo "🧠 NLP enabled: ${{ needs.validate-and-prepare.outputs.enable-nlp }}"
+          echo "⚙️  Mode: ${{ needs.validate-and-prepare.outputs.processing-mode }}"
+
+          # Set environment variables for processing
+          export ENABLE_NLP="${{ needs.validate-and-prepare.outputs.enable-nlp }}"
+          export PROCESSING_MODE="${{ needs.validate-and-prepare.outputs.processing-mode }}"
+          export MAX_PROCESSING_TIME="${{ steps.pdf-check.outputs.timeout }}"
+          export GITHUB_ACTIONS="true"
+
+          # Run enhanced processing
+          if [ "${{ needs.validate-and-prepare.outputs.processing-mode }}" == "full-nlp" ]; then
+            echo "🔬 Running full NLP processing..."
+            timeout ${{ steps.pdf-check.outputs.timeout }} node scripts/process-papers-enhanced.js || {
+              echo "⚠️  Enhanced processing timed out, falling back to basic processing"
+              node scripts/process-papers.js
+            }
+          else
+            echo "⚡ Running enhanced processing..."
+            timeout ${{ steps.pdf-check.outputs.timeout }} node scripts/process-papers-enhanced.js || {
+              echo "⚠️  Enhanced processing failed, falling back to basic processing"
+              node scripts/process-papers.js
+            }
+          fi
+
+      - name: Generate enhanced search indices
+        run: |
+          echo "🔍 Generating enhanced search indices..."
+          node scripts/generate-enhanced-search-index.js || {
+            echo "⚠️  Enhanced search generation failed, falling back to basic search"
+            node scripts/generate-search-index.js
+          }
+
+      - name: Validate processing results
+        run: |
+          echo "✅ Validating processing results..."
+
+          # Check if enhanced outputs were generated
+          if [ -f "data/papers.json" ]; then
+            PAPER_COUNT=$(node -e "console.log(JSON.parse(require('fs').readFileSync('data/papers.json')).papers.length)")
+            echo "📄 Generated data for ${PAPER_COUNT} papers"
+          fi
+
+          if [ -f "data/enhanced-search-index.json" ]; then
+            INDEX_SIZE=$(stat -f%z data/enhanced-search-index.json 2>/dev/null || stat --format=%s data/enhanced-search-index.json)
+            echo "🔍 Enhanced search index: $(echo $INDEX_SIZE | awk '{printf "%.2f KB", $1/1024}')"
+          fi
+
+          # Check for NLP processing results
+          if [ -f "data/papers.json" ]; then
+            NLP_COUNT=$(node -e "
+              const data = JSON.parse(require('fs').readFileSync('data/papers.json'));
+              const nlpProcessed = data.papers.filter(p => p.metadata && p.metadata.nlpProcessed).length;
+              console.log(nlpProcessed);
+            ")
+            echo "🧠 NLP processed papers: ${NLP_COUNT}"
+          fi
+
+      - name: Upload enhanced processing results
+        uses: actions/upload-artifact@v3
+        with:
+          name: enhanced-papers-data
+          path: |
+            data/papers.json
+            data/enhanced-search-index.json
+            data/semantic-search-index.json
+            data/topic-search-index.json
+            data/papers-search-index.json
+            data/papers-fulltext.json
+            data/reports/
+          retention-days: 5
+
+      - name: Upload processing logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: processing-logs
+          path: |
+            *.log
+          retention-days: 2
+
+  process-other-content:
+    name: Process Projects and Testimonials
+    runs-on: ubuntu-latest
+    needs: validate-and-prepare
+    if: needs.validate-and-prepare.outputs.content-changed == 'true' || github.event.inputs.force_rebuild == 'true'
+
+    strategy:
+      matrix:
+        content-type: [projects, testimonials]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Process content type
+        run: node scripts/process-${{ matrix.content-type }}.js
+        env:
+          CONTENT_TYPE: ${{ matrix.content-type }}
+          FORCE_REBUILD: ${{ github.event.inputs.force_rebuild }}
+
+      - name: Upload processed data
+        uses: actions/upload-artifact@v3
+        with:
+          name: processed-${{ matrix.content-type }}
+          path: |
+            data/${{ matrix.content-type }}.json
+          retention-days: 2
+
+  generate-final-assets:
+    name: Generate Final Search Index and Metadata
+    runs-on: ubuntu-latest
+    needs: [process-papers-enhanced, process-other-content]
+    if: always() && (needs.process-papers-enhanced.result == 'success' || needs.process-other-content.result == 'success')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download all processed content
+        uses: actions/download-artifact@v3
+        with:
+          path: temp-artifacts/
+
+      - name: Merge processed data
+        run: |
+          echo "🔗 Merging processed data..."
+          mkdir -p data/
+
+          # Copy enhanced papers data if available
+          if [ -f "temp-artifacts/enhanced-papers-data/papers.json" ]; then
+            cp temp-artifacts/enhanced-papers-data/* data/ 2>/dev/null || true
+            echo "✅ Using enhanced papers data"
+          fi
+
+          # Copy other content data
+          find temp-artifacts/processed-* -name "*.json" -exec cp {} data/ \; 2>/dev/null || true
+
+      - name: Generate unified search index
+        run: |
+          echo "🔍 Generating unified search index..."
+
+          # Use enhanced search if enhanced papers were processed
+          if [ -f "data/enhanced-search-index.json" ]; then
+            echo "✅ Enhanced search index already generated"
+          else
+            echo "📋 Generating basic search index"
+            node scripts/generate-search-index.js
+          fi
+
+      - name: Generate site metadata
+        run: |
+          node scripts/generate-metadata.js
+        env:
+          SITE_URL: ${{ github.event.repository.html_url }}
+          BUILD_TIMESTAMP: ${{ github.run_id }}
+          PROCESSING_MODE: ${{ needs.validate-and-prepare.outputs.processing-mode }}
+
+      - name: Generate processing report
+        run: |
+          echo "📊 Generating processing report..."
+          node -e "
+          const fs = require('fs');
+          const report = {
+            timestamp: new Date().toISOString(),
+            buildId: '${{ github.run_id }}',
+            processingMode: '${{ needs.validate-and-prepare.outputs.processing-mode }}',
+            nlpEnabled: '${{ needs.validate-and-prepare.outputs.enable-nlp }}',
+            triggeredBy: '${{ github.event_name }}',
+            files: fs.readdirSync('data/').filter(f => f.endsWith('.json')),
+            sizes: {}
+          };
+
+          report.files.forEach(file => {
+            try {
+              const stats = fs.statSync(\`data/\${file}\`);
+              report.sizes[file] = {
+                bytes: stats.size,
+                human: \`\${(stats.size / 1024).toFixed(2)} KB\`
+              };
+            } catch (e) {}
+          });
+
+          fs.writeFileSync('data/build-report.json', JSON.stringify(report, null, 2));
+          console.log('📄 Build report generated');
+          "
+
+      - name: Upload final data
+        uses: actions/upload-artifact@v3
+        with:
+          name: final-enhanced-data
+          path: |
+            data/
+          retention-days: 5
+
+  deploy-enhanced-content:
+    name: Deploy Enhanced Content
+    runs-on: ubuntu-latest
+    needs: [validate-and-prepare, generate-final-assets]
+    if: |
+      github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' &&
+      needs.generate-final-assets.result == 'success'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Download final enhanced data
+        uses: actions/download-artifact@v3
+        with:
+          name: final-enhanced-data
+          path: data/
+
+      - name: Check for changes
+        id: verify-changes
+        run: |
+          git add data/
+          if git diff --staged --quiet; then
+            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No changes to commit"
+          else
+            echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Changes detected:"
+            git diff --staged --name-only
+
+            # Show enhanced processing info
+            if [ -f "data/build-report.json" ]; then
+              echo "📊 Build Report:"
+              cat data/build-report.json | jq -r '
+                "Processing Mode: " + .processingMode + "\n" +
+                "NLP Enabled: " + .nlpEnabled + "\n" +
+                "Files Generated: " + (.files | length | tostring) + "\n" +
+                "Total Size: " + ([.sizes[].bytes] | add / 1024 / 1024 | . * 100 | round / 100 | tostring) + " MB"
+              '
+            fi
+          fi
+
+      - name: Commit and push enhanced content
+        if: steps.verify-changes.outputs.changes == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Enhanced Content Processor"
+
+          # Create comprehensive commit message
+          PROCESSING_MODE="${{ needs.validate-and-prepare.outputs.processing-mode }}"
+          NLP_ENABLED="${{ needs.validate-and-prepare.outputs.enable-nlp }}"
+
+          git commit -m "🤖 Enhanced Content Processing - Phase 2
+
+          🔬 Processing Mode: ${PROCESSING_MODE}
+          🧠 NLP Analysis: ${NLP_ENABLED}
+          🔍 Enhanced Search: $([ -f 'data/enhanced-search-index.json' ] && echo 'Yes' || echo 'No')
+          📊 Semantic Index: $([ -f 'data/semantic-search-index.json' ] && echo 'Yes' || echo 'No')
+          📈 Topic Analysis: $([ -f 'data/topic-search-index.json' ] && echo 'Yes' || echo 'No')
+
+          Features:
+          - Full-text PDF content extraction
+          - NLP-powered content analysis
+          - Semantic search capabilities
+          - Topic modeling and categorization
+          - Citation extraction and analysis
+          - Advanced search filtering
+
+          Build: ${{ github.run_id }}
+          Commit: ${{ github.sha }}
+
+          🤖 Generated with [Claude Code](https://claude.ai/code)
+
+          Co-Authored-By: Claude <noreply@anthropic.com>"
+
+          git push
+
+  notify-completion:
+    name: Notify Enhanced Processing Complete
+    runs-on: ubuntu-latest
+    needs: [deploy-enhanced-content, validate-and-prepare]
+    if: always()
+
+    steps:
+      - name: Enhanced Processing Summary
+        run: |
+          echo "## Enhanced Content Processing Summary (Phase 2)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Processing Mode**: ${{ needs.validate-and-prepare.outputs.processing-mode }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **NLP Enabled**: ${{ needs.validate-and-prepare.outputs.enable-nlp }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ needs.deploy-enhanced-content.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### Enhanced Features" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Full-text PDF content extraction" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ NLP-powered content analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Semantic search capabilities" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Topic modeling and categorization" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Citation extraction and analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Advanced search filtering" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.deploy-enhanced-content.result }}" = "success" ]; then
+            echo "🎉 **Enhanced content processing completed successfully!**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the following enhanced data files:" >> $GITHUB_STEP_SUMMARY
+            echo "- \`data/papers.json\` - Enhanced paper data with NLP analysis" >> $GITHUB_STEP_SUMMARY
+            echo "- \`data/enhanced-search-index.json\` - Advanced search capabilities" >> $GITHUB_STEP_SUMMARY
+            echo "- \`data/semantic-search-index.json\` - Semantic search index" >> $GITHUB_STEP_SUMMARY
+            echo "- \`data/topic-search-index.json\` - Topic-based search" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Enhanced content processing encountered issues**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please check the workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          fi

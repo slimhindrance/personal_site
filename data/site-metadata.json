@@ -1,0 +1,254 @@
+{
+  "site": {
+    "url": "https://your-site.github.io",
+    "name": "Christopher Lindeman Portfolio",
+    "description": "Software Engineer & AI Researcher Portfolio",
+    "author": "Christopher Lindeman",
+    "buildId": "1758562744800",
+    "buildDate": "2025-09-22T17:39:04.802Z",
+    "version": "2.0.0",
+    "generator": "Custom GitHub Actions Pipeline"
+  },
+  "content": {
+    "statistics": {
+      "projects": {
+        "total": 0,
+        "featured": 0,
+        "technologies": [],
+        "averageWordsPerProject": 0
+      },
+      "papers": {
+        "total": 0,
+        "totalPages": 0,
+        "categories": [],
+        "totalSizeBytes": 0
+      },
+      "testimonials": {
+        "total": 0,
+        "featured": 0,
+        "verified": 0,
+        "averageRating": null,
+        "averageWordsPerTestimonial": 0
+      },
+      "overall": {
+        "totalContent": 0,
+        "lastUpdated": "2025-09-22T17:39:04.439Z",
+        "contentTypes": 3
+      }
+    },
+    "lastUpdated": "2025-09-22T17:39:04.439Z",
+    "totalItems": 0
+  },
+  "navigation": {
+    "primary": [
+      {
+        "label": "Home",
+        "url": "/",
+        "type": "page"
+      },
+      {
+        "label": "Projects",
+        "url": "/projects.html",
+        "type": "page",
+        "count": 0,
+        "featured": 0
+      },
+      {
+        "label": "Research",
+        "url": "/research.html",
+        "type": "page",
+        "count": 0,
+        "categories": 0
+      },
+      {
+        "label": "Testimonials",
+        "url": "/testimonials.html",
+        "type": "page",
+        "count": 0,
+        "averageRating": null
+      },
+      {
+        "label": "Resume",
+        "url": "/resume.html",
+        "type": "page"
+      },
+      {
+        "label": "Contact",
+        "url": "/contact.html",
+        "type": "page"
+      }
+    ],
+    "breadcrumbs": {
+      "home": [
+        {
+          "label": "Home",
+          "url": "/"
+        }
+      ],
+      "projects": [
+        {
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "label": "Projects",
+          "url": "/projects.html"
+        }
+      ],
+      "research": [
+        {
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "label": "Research",
+          "url": "/research.html"
+        }
+      ],
+      "testimonials": [
+        {
+          "label": "Home",
+          "url": "/"
+        },
+        {
+          "label": "Testimonials",
+          "url": "/testimonials.html"
+        }
+      ]
+    },
+    "categories": {
+      "projects": [],
+      "papers": [],
+      "technologies": []
+    }
+  },
+  "seo": {
+    "meta": {
+      "title": "Christopher Lindeman - Software Engineer & AI Researcher",
+      "description": "Portfolio showcasing 0 projects, 0 research papers, and 0 client testimonials. Specializing in AI, machine learning, and software development.",
+      "keywords": [
+        "software engineer",
+        "AI researcher",
+        "machine learning",
+        "portfolio",
+        "projects",
+        "research papers"
+      ],
+      "author": "Christopher Lindeman",
+      "robots": "index, follow",
+      "canonical": "https://your-site.github.io"
+    },
+    "openGraph": {
+      "type": "website",
+      "url": "https://your-site.github.io",
+      "title": "Christopher Lindeman Portfolio",
+      "description": "Software Engineer & AI Researcher with 0 projects and 0 publications",
+      "siteName": "Christopher Lindeman Portfolio",
+      "locale": "en_US"
+    },
+    "twitterCard": {
+      "card": "summary_large_image",
+      "site": "@your_twitter_handle",
+      "creator": "@your_twitter_handle",
+      "title": "Christopher Lindeman Portfolio",
+      "description": "Software Engineer & AI Researcher Portfolio"
+    },
+    "structuredData": {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Christopher Lindeman",
+      "jobTitle": "Software Engineer & AI Researcher",
+      "url": "https://your-site.github.io",
+      "sameAs": [],
+      "knowsAbout": [],
+      "numberOfProjects": 0,
+      "numberOfPublications": 0
+    }
+  },
+  "sitemap": {
+    "urls": [
+      {
+        "url": "https://your-site.github.io/",
+        "lastmod": "2025-09-22T17:39:04.803Z",
+        "changefreq": "weekly",
+        "priority": "1.0"
+      },
+      {
+        "url": "https://your-site.github.io/projects.html",
+        "lastmod": "2025-09-22T17:39:04.213Z",
+        "changefreq": "weekly",
+        "priority": "0.9"
+      },
+      {
+        "url": "https://your-site.github.io/research.html",
+        "lastmod": "2025-09-22T17:39:04.321Z",
+        "changefreq": "monthly",
+        "priority": "0.8"
+      },
+      {
+        "url": "https://your-site.github.io/testimonials.html",
+        "lastmod": "2025-09-22T17:39:04.439Z",
+        "changefreq": "monthly",
+        "priority": "0.7"
+      },
+      {
+        "url": "https://your-site.github.io/resume.html",
+        "lastmod": "2025-09-22T17:39:04.803Z",
+        "changefreq": "monthly",
+        "priority": "0.8"
+      },
+      {
+        "url": "https://your-site.github.io/contact.html",
+        "lastmod": "2025-09-22T17:39:04.803Z",
+        "changefreq": "yearly",
+        "priority": "0.6"
+      }
+    ],
+    "totalUrls": 6,
+    "lastGenerated": "2025-09-22T17:39:04.803Z"
+  },
+  "rss": {
+    "title": "Christopher Lindeman Portfolio - Latest Updates",
+    "description": "Latest projects and research from Christopher Lindeman",
+    "url": "https://your-site.github.io",
+    "items": [],
+    "lastBuildDate": "2025-09-22T17:39:04.804Z",
+    "totalItems": 0
+  },
+  "performance": {
+    "dataSize": {
+      "total": 1320,
+      "totalHuman": "1.29 KB",
+      "breakdown": {
+        "projects.json": {
+          "bytes": 279,
+          "human": "279 B"
+        },
+        "papers.json": {
+          "bytes": 324,
+          "human": "324 B"
+        },
+        "testimonials.json": {
+          "bytes": 717,
+          "human": "717 B"
+        },
+        "site-metadata.json": {
+          "bytes": 0,
+          "human": "0 B"
+        }
+      }
+    },
+    "buildTime": "2025-09-22T17:39:04.804Z",
+    "compressionRecommended": false,
+    "estimatedLoadTime": "Under 1 second"
+  },
+  "build": {
+    "timestamp": "2025-09-22T17:39:04.802Z",
+    "buildId": "1758562744800",
+    "nodeVersion": "v24.7.0",
+    "platform": "darwin",
+    "environment": "production",
+    "commit": "unknown",
+    "workflow": "local"
+  }
+}
